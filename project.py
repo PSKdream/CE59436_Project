@@ -23,7 +23,8 @@ def onClick(event, x, y, flags, param):
 cv2.namedWindow('frame')
 cv2.setMouseCallback('frame', onClick)
 
-cap = cv2.VideoCapture(1, cv2.CAP_DSHOW)
+cap = cv2.VideoCapture(0, cv2.CAP_DSHOW)
+bgsub = cv2.createBackgroundSubtractorKNN()
 bg = None
 bgsub_status = False
 
@@ -50,15 +51,16 @@ while True:
         frame_temp = frame.copy()
         if bg is not None:
             gray = cv2.absdiff(frame, bg)
-            bgsub = cv2.threshold(gray, 50, 255, cv2.THRESH_BINARY)[1]
-
+            # bgsub = cv2.threshold(gray, 50, 255, cv2.THRESH_BINARY)[1]
+            fg = bgsub.apply(frame)
+            B_fg = cv2.threshold(fg, 0, 255, cv2.THRESH_BINARY)[1]
 
 
             B = cv2.threshold(frame, 60, 255, cv2.THRESH_BINARY | cv2.THRESH_OTSU)[1]
             B = cv2.dilate(B, np.ones((5, 5)))
             cv2.imshow('frame', frame)
             cv2.imshow('b', B)
-            cv2.imshow('gray', bgsub)
+            cv2.imshow('gray', B_fg)
             for row in range(3):
                 for col in range(3):
                     start_point = [15+(col*100), 15+(row*100)]
@@ -70,7 +72,7 @@ while True:
                     # print(np.sum(area == 0)/(70*70*100))
                     # print("---------------------------------")
                     # print(np.sum(bgsub == 255) / (300*300))
-                    if (np.sum(area == 0)/(70.0*70) > 0.2) and np.sum(bgsub == 255) / (300.0*300.0) < 0.1:
+                    if (np.sum(area == 0)/(70.0*70) > 0.2) and np.sum(B_fg == 255) / (300.0*300.0) < 0.05:
                         if xo.board[row, col] == '_':
                             print('waiting ai')
                             index = xo.move_vs_ai((row, col))
