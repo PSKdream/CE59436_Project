@@ -25,6 +25,7 @@ cv2.setMouseCallback('frame', onClick)
 
 cap = cv2.VideoCapture(1, cv2.CAP_DSHOW)
 bg = None
+bgsub_status = False
 
 # pts1 = [[50, 49], [239, 50], [239, 240], [49, 240]]
 
@@ -65,9 +66,11 @@ while True:
                     cv2.rectangle(frame, start_point, end_point, (255, 0, 0))
 
                     area = B[start_point[1]:start_point[1]+70, start_point[0]:start_point[0]+70]
-
                     # print(np.sum(B_fg==255)/(500*300))
-                    if (np.sum(area == 0)/70*70*100 > 10) and np.sum(bgsub == 255) == 0:
+                    # print(np.sum(area == 0)/(70*70*100))
+                    # print("---------------------------------")
+                    # print(np.sum(bgsub == 255) / (300*300))
+                    if (np.sum(area == 0)/(70.0*70) > 0.2) and np.sum(bgsub == 255) / (300.0*300.0) < 0.1:
                         if xo.board[row, col] == '_':
                             print('waiting ai')
                             index = xo.move_vs_ai((row, col))
@@ -75,8 +78,9 @@ while True:
                     if xo.board[row,col] == 'O':
                         org = [15 + (col * 100), 85+(row*100)]
                         cv2.putText(frame, 'O', org, cv2.FONT_HERSHEY_SIMPLEX, 3, 0, 3)
-
-        bg = frame_temp
+        if bgsub_status == False:
+            bg = frame_temp
+            bgsub_status = True
                         # print(row, col)
 
 
