@@ -79,10 +79,13 @@ class TicTaeToe:
         # print(hint1)
         if self.is_end(self.ai) == self.ai:
             print("ai win")
+            return 'lose'
         elif self.is_end(self.player) == self.player:
             print("player win")
+            return 'win'
         elif self.is_end(self.player) is None:
-            print("not win")
+            print("Draw")
+            return 'draw'
 
     def predict(self):
         board = self.board

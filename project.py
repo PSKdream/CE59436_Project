@@ -9,6 +9,7 @@ pts1 = []
 pts2 = [[0, 0], [300, 0], [300, 300], [0, 300]]
 xo = TicTaeToe()
 
+
 def onClick(event, x, y, flags, param):
     global pts_move
     if event == cv2.EVENT_LBUTTONDOWN:
@@ -23,16 +24,15 @@ def onClick(event, x, y, flags, param):
 cv2.namedWindow('frame')
 cv2.setMouseCallback('frame', onClick)
 
-cap = cv2.VideoCapture(1, cv2.CAP_DSHOW)
+cap = cv2.VideoCapture(0, cv2.CAP_DSHOW)
 bgsub = cv2.createBackgroundSubtractorKNN()
-bg = None
-bgsub_status = False
+
 
 # pts1 = [[50, 49], [239, 50], [239, 240], [49, 240]]
 
 while True:
     _, frame = cap.read()
-    frame = cv2.flip(frame,-1)
+    frame = cv2.flip(frame, -1)
     # frame = img
     imgray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
 
@@ -49,58 +49,66 @@ while True:
         T = cv2.getPerspectiveTransform(np.float32(pts1), np.float32(pts2))
         frame = cv2.warpPerspective(imgray, T, (300, 300))
         frame_temp = frame.copy()
-        if bg is not None:
-            gray = cv2.absdiff(frame, bg)
-            # bgsub = cv2.threshold(gray, 50, 255, cv2.THRESH_BINARY)[1]
-            fg = bgsub.apply(frame)
-            B_fg = cv2.threshold(fg, 0, 255, cv2.THRESH_BINARY)[1]
 
+        fg = bgsub.apply(frame)
+        B_fg = cv2.threshold(fg, 0, 255, cv2.THRESH_BINARY)[1]
 
-            B = cv2.threshold(frame, 60, 255, cv2.THRESH_BINARY | cv2.THRESH_OTSU)[1]
-            B = cv2.dilate(B, np.ones((3, 3)))
-            cv2.imshow('frame', frame)
-            cv2.imshow('b', B)
-            cv2.imshow('gray', B_fg)
-            for row in range(3):
-                for col in range(3):
-                    start_point = [15+(col*100), 15+(row*100)]
-                    end_point = [85+(col*100), 85+(row*100)]
-                    cv2.rectangle(frame, start_point, end_point, (0, 0, 0))
+        B = cv2.threshold(frame, 60, 255, cv2.THRESH_BINARY | cv2.THRESH_OTSU)[1]
+        B = cv2.dilate(B, np.ones((3, 3)))
+        cv2.imshow('frame', frame)
+        cv2.imshow('b', B)
+        cv2.imshow('gray', B_fg)
 
-                    area = B[start_point[1]:start_point[1]+70, start_point[0]:start_point[0]+70]
-                    # print(np.sum(B_fg==255)/(500*300))
-                    # print(np.sum(area == 0)/(70*70*100))
-                    # print("---------------------------------")
-                    # print(np.sum(bgsub == 255) / (300*300))
-                    if (np.sum(area == 0)/(70.0*70) > 0.1) and np.sum(B_fg == 255) / (300.0*300.0) < 0.05:
-                        if xo.board[row, col] == '_':
-                            print('waiting ai')
-                            index = xo.move_vs_ai((row, col))
-                            xo.display()
-                    if xo.board[row,col] == 'O':
-                        org = [15 + (col * 100), 85+(row*100)]
-                        cv2.putText(frame, 'O', org, cv2.FONT_HERSHEY_SIMPLEX, 3, 0, 3)
-        if bgsub_status == False:
-            bg = frame_temp
-            bgsub_status = True
-                        # print(row, col)
+        for row in range(3):
+            for col in range(3):
+                start_point = [15 + (col * 100), 15 + (row * 100)]
+                end_point = [85 + (col * 100), 85 + (row * 100)]
+                cv2.rectangle(frame, start_point, end_point, (0, 0, 0))
 
+                area = B[start_point[1]:start_point[1] + 70, start_point[0]:start_point[0] + 70]
 
-    # ret, thresh = cv2.threshold(imgray, 127, 255, 0)
-    # thresh = cv2.medianBlur(thresh, 5)
-    # contours, hierarchy = cv2.findContours(thresh, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
-    # if len(contours) != 0:
-    #     # draw in blue the contours that were founded
-    #     cv2.drawContours(frame, contours, -1, 255, 3)
-    #     # find the biggest countour (c) by the area
-    #     c = max(contours, key=cv2.contourArea)
-    #
-    #     approx = cv2.approxPolyDP(c, 0.1 * cv2.arcLength(c, True), True)
-    #     cv2.drawContours(frame, [approx], 0, (0, 0, 255), 5)
-    #
-    #     if len(approx) == 4:
-    #         position = [i[0] for i in approx]  #position for perspective
+                if (np.sum(area == 0) / (70.0 * 70) > 0.1) and np.sum(B_fg == 255) / (300.0 * 300.0) < 0.05:
+                    if xo.board[row, col] == '_':
+                        print('waiting ai')
+                        index = xo.move_vs_ai((row, col))
+                        result = xo.display()
+                        if result == 'win':
+                            print("########################")
+                            print("####  You Win !!!  ####")
+                            print("########################")
+                            break
+                        elif result == 'lose':
+                            print("########################")
+                            print("####  You lose !!!  ####")
+                            print("########################")
+                            break
+                        elif result == 'draw':
+                            print("########################")
+                            print("####  You Draw !!!  ####")
+                            print("########################")
+                            break
 
+                if xo.board[row, col] == 'O':
+                    org = [15 + (col * 100), 85 + (row * 100)]
+                    cv2.putText(frame, 'O', org, cv2.FONT_HERSHEY_SIMPLEX, 3, 0, 3)
+
+                    # print(row, col)
     cv2.imshow('frame', frame)
     cv2.waitKey(1)
     time.sleep(0.1)
+# ret, thresh = cv2.threshold(imgray, 127, 255, 0)
+# thresh = cv2.medianBlur(thresh, 5)
+# contours, hierarchy = cv2.findContours(thresh, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+# if len(contours) != 0:
+#     # draw in blue the contours that were founded
+#     cv2.drawContours(frame, contours, -1, 255, 3)
+#     # find the biggest countour (c) by the area
+#     c = max(contours, key=cv2.contourArea)
+#
+#     approx = cv2.approxPolyDP(c, 0.1 * cv2.arcLength(c, True), True)
+#     cv2.drawContours(frame, [approx], 0, (0, 0, 255), 5)
+#
+#     if len(approx) == 4:
+#         position = [i[0] for i in approx]  #position for perspective
+
+
