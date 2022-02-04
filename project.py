@@ -26,6 +26,7 @@ cap = cv2.VideoCapture(0, cv2.CAP_DSHOW)
 
 img = cv2.imread('platformX.png')
 bg = None
+bgsub_status = False
 # pts1 = [[50, 49], [239, 50], [239, 240], [49, 240]]
 
 while True:
@@ -74,8 +75,9 @@ while True:
                     if xo.board[row,col] == 'O':
                         org = [15 + (col * 100), 85+(row*100)]
                         cv2.putText(frame, 'O', org, cv2.FONT_HERSHEY_SIMPLEX, 3, 0, 3)
-
-        bg = frame_temp
+        if bgsub_status == False:
+            bg = frame_temp
+            bgsub_status = True
                         # print(row, col)
 
 
