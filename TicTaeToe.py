@@ -85,6 +85,14 @@ class TicTaeToe:
             print("not win")
 
     def predict(self):
+        board = self.board
+        hint = self.rule(self.ai, self.player, board)
+        if hint != None:
+            return hint
+        hint = self.rule(self.player, self.ai, board)
+        if hint != None:
+            return hint
+
         Q_score = np.full((3, 3), 0.0)
         loc = np.where(self.board == '_')
         for location in range(len(loc[0])):
