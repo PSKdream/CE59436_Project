@@ -15,16 +15,16 @@ while True:
     if len(contours) != 0:
         # draw in blue the contours that were founded
         cv2.drawContours(frame, contours, -1, 255, 3)
-
         # find the biggest countour (c) by the area
         c = max(contours, key=cv2.contourArea)
-        # x, y, w, h = cv2.boundingRect(c)
-        #
-        # # draw the biggest contour (c) in green
-        # cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 255, 0), 2)
+
         approx = cv2.approxPolyDP(c, 0.1 * cv2.arcLength(c, True), True)
-        # print(approx)
         cv2.drawContours(frame, [approx], 0, (0, 0, 255), 5)
+
+        if len(approx) == 4:
+            position = [i[0] for i in approx]  #position for perspective
+
+
 
     cv2.imshow('t', frame)
     cv2.waitKey(1)
