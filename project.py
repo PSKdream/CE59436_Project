@@ -20,7 +20,7 @@ def onClick(event, x, y, flags, param):
 
 cv2.namedWindow('frame')
 cv2.setMouseCallback('frame', onClick)
-cap = cv2.VideoCapture(0, cv2.CAP_DSHOW)
+cap = cv2.VideoCapture(1, cv2.CAP_DSHOW)
 while True:
     _, frame = cap.read()
     imgray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
@@ -43,6 +43,7 @@ while True:
                 start_point = [15+(col*100), 15+(row*100)]
                 end_point = [85+(col*100), 85+(row*100)]
                 cv2.rectangle(frame, start_point, end_point, (255, 0, 0))
+
 
     # ret, thresh = cv2.threshold(imgray, 127, 255, 0)
     # thresh = cv2.medianBlur(thresh, 5)
