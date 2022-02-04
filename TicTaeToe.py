@@ -128,7 +128,9 @@ class TicTaeToe:
         if board[loc] == '_':
             board[loc] = self.player
             if self.is_end(self.player, board) == '?':
-                board[self.predict()] = self.ai
+                index = self.predict()
+                board[index] = self.ai
+                return index
             return None
         else:
             print('Error : position duplicate')
