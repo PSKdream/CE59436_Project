@@ -87,6 +87,16 @@ class TicTaeToe:
             print("Draw")
             return 'draw'
 
+    def validateResult(self):
+        if self.is_end(self.ai) == self.ai:
+            return 'Lose'
+        elif self.is_end(self.player) == self.player:
+            return 'Win'
+        elif self.is_end(self.player) is None:
+            return 'Draw'
+        else:
+            return '?'
+
     def predict(self):
         board = self.board
         hint = self.rule(self.ai, self.player, board)
