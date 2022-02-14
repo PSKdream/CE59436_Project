@@ -143,7 +143,7 @@ class TicTaeToe:
             # print(random_loc)
             return random_loc
 
-    def move_vs_ai(self, loc, board=None):
+    def play(self, loc, board=None):
         if board is None:
             board = self.board
         if board[loc] == '_':
@@ -151,11 +151,7 @@ class TicTaeToe:
             if self.is_end(self.player, board) == '?':
                 index = self.predict()
                 board[index] = self.ai
-                return index
-            return None
-        else:
-            print('Error : position duplicate')
-            return 'Error : position duplicate'
+            return self.validateResult()
 
 
 
