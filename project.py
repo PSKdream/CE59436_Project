@@ -18,7 +18,7 @@ xo = TicTaeToe()
 # Init Variable
 iframe = 0
 n_frame = None
-status = None
+state = None
 result = '?'
 cap = cv2.VideoCapture(0, cv2.CAP_DSHOW)
 
@@ -31,11 +31,11 @@ def knnMatch(des_ar_marker, des_image):
         if m.distance < 0.6 * n.distance:
             tempArr.append(m)
     return tempArr
-
+# return distance
 
 while True:
     _, frame = cap.read()  # read camera
-    cv2.imshow('original', frame)  # show original image
+    cv2.imshow('original', cv2.flip(frame,-1))  # show original image
     iframe += 1
 
     # detect AR Marker table
@@ -43,6 +43,7 @@ while True:
     goodPoint = knnMatch(desTable, desImage)
 
     if len(goodPoint) >= 4:
+
         pt1 = np.float32([kpTable[m.queryIdx].pt for m in goodPoint])
         pt2 = np.float32([kpImage[m.trainIdx].pt for m in goodPoint])
         T1, _ = cv2.findHomography(pt2, pt1, cv2.RANSAC, 5.0)
@@ -62,13 +63,13 @@ while True:
 
             # Show Image
             cv2.imshow('frame', frame)
-            cv2.imshow('Binary', B)
+            cv2.imshow('Bin', B)
 
-            # chang status confirm
-            if status is None and len(goodPoint) < 1:
-                status = "Closed"
-            elif status == "Closed" and len(goodPoint) >= 2:
-                status = "Opened"
+            # change state confirm
+            if state is None and len(goodPoint) < 1:
+                state = "Closed"
+            elif state == "Closed" and len(goodPoint) >= 2:
+                state = "Opened"
 
             # check mark in the paper
             for row in range(3):
@@ -84,9 +85,9 @@ while True:
                         continue
 
                     # check confirm
-                    if status != "Opened":
+                    if state != "Opened":
                         continue
-                    print(status)
+
                     if n_frame is None:
                         n_frame = iframe
                     elif iframe == n_frame + 15:
@@ -99,7 +100,7 @@ while True:
                         if np.sum(area == 255) / (70 * 70) > 0.08:
                             if xo.board[row, col] == '_':
                                 n_frame = None
-                                status = None
+                                state = None
                                 if result == '?':
                                     print('....Waiting ai....')
                                     result = xo.play((row, col))  # Play and get game result
@@ -111,8 +112,8 @@ while True:
 
                             elif xo.board[row, col] == 'O':
                                 print('Please try again')
-                                if status == "Opened":
+                                if state == "Opened":
                                     n_frame = None
-                                    status = None
+                                    state = None
     cv2.imshow('frame', frame)
     cv2.waitKey(1)
