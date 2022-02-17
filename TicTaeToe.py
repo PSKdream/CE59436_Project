@@ -73,30 +73,6 @@ class TicTaeToe:
         i = np.random.choice(len(loc[0]))
         return loc[0][i], loc[1][i]
 
-    def display(self):
-        print(self.board)
-        # hint1 = self.rule(self.player, self.ai)
-        # print(hint1)
-        if self.is_end(self.ai) == self.ai:
-            print("ai win")
-            return 'lose'
-        elif self.is_end(self.player) == self.player:
-            print("player win")
-            return 'win'
-        elif self.is_end(self.player) is None:
-            print("Draw")
-            return 'draw'
-
-    def validateResult(self):
-        if self.is_end(self.ai) == self.ai:
-            return 'Lose'
-        elif self.is_end(self.player) == self.player:
-            return 'Win'
-        elif self.is_end(self.player) is None:
-            return 'Draw'
-        else:
-            return '?'
-
     def predict(self):
         board = self.board
         hint = self.rule(self.ai, self.player, board)
@@ -153,8 +129,29 @@ class TicTaeToe:
                 board[index] = self.ai
             return self.validateResult()
 
+    def validateResult(self):
+        if self.is_end(self.ai) == self.ai:
+            return 'Lose'
+        elif self.is_end(self.player) == self.player:
+            return 'Win'
+        elif self.is_end(self.player) is None:
+            return 'Draw'
+        else:
+            return '?'
 
-
+    def display(self):
+        print(self.board)
+        # hint1 = self.rule(self.player, self.ai)
+        # print(hint1)
+        if self.is_end(self.ai) == self.ai:
+            print("ai win")
+            return 'lose'
+        elif self.is_end(self.player) == self.player:
+            print("player win")
+            return 'win'
+        elif self.is_end(self.player) is None:
+            print("Draw")
+            return 'draw'
 
 # ox = TicTaeToe()
 # ox.move_vs_ai((0, 1))

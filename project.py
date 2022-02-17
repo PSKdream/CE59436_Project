@@ -35,7 +35,8 @@ def knnMatch(des_ar_marker, des_image):
 
 while True:
     _, frame = cap.read()  # read camera
-    cv2.imshow('original', cv2.flip(frame,-1))  # show original image
+    # frame = cv2.flip(frame,-1)  #flip image
+    cv2.imshow('original', frame)  # show original image
     iframe += 1
 
     # detect AR Marker table
