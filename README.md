@@ -1,4 +1,4 @@
-# DIP_Project
+# DIP_Project (VR Tic-Tae-Toe vs AI)
 * Bot Tic-Tae-Toe using RL(Q-Lerning)
 * Image Processing to get user action
 
